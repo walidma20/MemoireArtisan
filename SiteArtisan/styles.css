@@ -1,0 +1,68 @@
+body{
+background-image:url(bg.PNG);
+background-size:cover;
+background-attachment:fixed;
+ padding : 0px;
+ margin : 0px;
+
+}
+fieldset{
+margin-top :70px;
+width: 30%;
+background-color: rgb(45, 45, 45);
+border:0px;
+padding-left: 10px;
+border-radius: 10px 10px 10px 10px;
+color : white;
+height: 1030px;
+}
+td {letter-spacing:1px;
+color : white;}
+h1{
+font-family:andalus;
+
+text-align:center;
+color : white;
+}
+hr{
+border:  5px solid white;
+border-radius: 10px;
+width:40%
+}
+
+ul li{margin-left:20px; color: rgb(0, 0, 0) ;}
+
+
+#submit{
+margin:20px 35px;
+color: rgb(255, 255, 255);
+background-color:rgb(43, 42, 42);
+width:80%;
+font-size:18px;
+border-radius:20px;
+border: 1px solid white;
+ }
+#submit:hover{
+color:white;
+background-color:Gray;
+}
+input{
+font-size:16px;
+border:none solid white;
+outline: non;
+background: #eeeeee;
+border-bottom:1px solid white;
+}
+
+select{
+    box-shadow:5px 5px 20px 1px 10px rgd (85, 85, 85);
+    padding:0.1em 5.3em 0.1em 1.5em ;
+    font-size:16px;
+    border:none solid white;
+    outline: non;
+    background: white;
+    border-bottom:1px solid white;
+    
+    color : gray;
+    
+    }
