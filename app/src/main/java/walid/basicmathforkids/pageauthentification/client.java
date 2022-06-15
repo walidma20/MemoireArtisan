@@ -1,21 +1,11 @@
 package walid.basicmathforkids.pageauthentification;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Build;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,8 +20,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.common.api.Api;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,44 +38,32 @@ public class client extends AppCompatActivity implements AdapterView.OnItemSelec
     ArrayAdapter<String> metieAdapter;
     ArrayAdapter<String> artisanAdapter;
     RequestQueue requestQueue;
-    Button Mapbutton, ConfButton;
-    EditText location, Description;
-     LocationListener locationListener;
-     LocationManager locationManager;
+    Button ConfButton,Check;
+    EditText  Description;
+    EditText location;
+    String MetieName;
+    String artisan;
+    String idservice;
+    ProgressDialog progressDialog;
 
-    @SuppressLint("MissingPermission")
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client);
 
-        locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(@NonNull Location location) {
-                Log.d("my Location" , location.toString());
-            }
-        };
-        if(Build.VERSION.SDK_INT <23){
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0, locationListener);
-        }else {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission( Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 3);
-            } else {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-            }
-        }
-
 
         requestQueue = Volley.newRequestQueue(this);
-        Mapbutton=findViewById(R.id.idmap);
-       ConfButton=findViewById(R.id.idConfirmation);
+        ConfButton=findViewById(R.id.idConfirmation);
         spinnerMetie= findViewById(R.id.spmetier);
         spinnerMetie.setOnItemSelectedListener(this);
         spinnerArtisan= findViewById(R.id.spartisan);
-        location=findViewById(R.id.idLocation);
-       Description=findViewById(R.id.IdDescription);
+        Description=findViewById(R.id.IdDescription);
+        location = findViewById(R.id.idLocation);
+        Check = findViewById(R.id.check);
+        progressDialog = new ProgressDialog(this);
         String url = Constants.ROOT_URL+Constants.URL_SpMetier;
+        String Location = location.getText().toString().trim();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,  new Response.Listener<String>() {
             @Override
             public void onResponse( String response) {
@@ -94,14 +72,16 @@ public class client extends AppCompatActivity implements AdapterView.OnItemSelec
                     // On récupère le tableau d'objets qui nous concernent
                     System.out.println("url : " + url);
                     System.out.println("reponse : " + response);
-                    JSONObject jsonObject = new JSONObject(response);
-                    JSONArray array = new JSONArray(jsonObject);
+                    JSONArray array = new JSONArray(response);
+
+                    //JSONObject jsonObject = new JSONObject(response);
+                    //JSONArray array = new JSONArray(jsonObject);
                     // Pour tous les objets on récupère les infos
                     System.out.println("taille : " + array.length());
                     for(int i=0; i<array.length();i++){
                         JSONObject jsonObject1 = array.getJSONObject(i);
-                        String MetieName = jsonObject1.getString("Nom_metier");
-                        System.out.println("erreur : " + MetieName);
+                         MetieName = jsonObject1.getString("Nom_metier");
+                        System.out.println("metier : " + MetieName);
                         metieList.add(MetieName);
 
                     }
@@ -125,59 +105,65 @@ public class client extends AppCompatActivity implements AdapterView.OnItemSelec
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-            }
-        }
-    }
-    @SuppressLint("MissingPermission")
-    @RequiresApi(api = Build.VERSION_CODES.M)
-
-
-    @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         if(adapterView.getId() == R.id.spmetier){
+            System.out.println("spinner action");
             artisanList.clear();
             String selectedmetier = adapterView.getSelectedItem().toString();
+            System.out.println("selection : "+selectedmetier);
+
             String url=Constants.ROOT_URL+Constants.URL_SpArtisan ;
             requestQueue = Volley.newRequestQueue(this);
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST,
-                    url, null, new Response.Listener<JSONObject>() {
+
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, url,  new Response.Listener<String>() {
+
                 @Override
-                public void onResponse(JSONObject response) {
-
+                public void onResponse(String response) {
+                    progressDialog.dismiss();
                     try {
+                        System.out.println("reponse : " + response);
 
-                        // On récupère le tableau d'objets qui nous concernent
-                        JSONArray array = new JSONArray(response.getString("effectue"));
-                        // Pour tous les objets on récupère les infos
+                        JSONArray array = new JSONArray(response);
 
+
+                        System.out.println("taille : " + array.length());
                         for(int i=0; i<array.length();i++){
                             JSONObject jsonObject = array.getJSONObject(i);
-                            String MetieName = jsonObject.getString("Nom_artisan");
-                            artisanList.add(MetieName);
+                             artisan = jsonObject.getString("Nom_artisan");
+                            System.out.println("selection : "+ artisan);
+
+                            artisanList.add(artisan);
 
                         }
+
+
 
                         artisanAdapter = new ArrayAdapter<>(client.this,
                                 android.R.layout.simple_spinner_item, artisanList);
                         artisanAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         spinnerArtisan.setAdapter( artisanAdapter);
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
+            },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
 
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("metier",selectedmetier);
+                    return params;
                 }
-            });
-            requestQueue.add(jsonObjectRequest);
+            };
+            RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
+
+
         }
     }
 
@@ -185,8 +171,61 @@ public class client extends AppCompatActivity implements AdapterView.OnItemSelec
     public void onNothingSelected(AdapterView<?> adapterView) {
 
     }
+
+
+
+
+
+
+
+    public void confirmation(View v) {
+        String url = Constants.ROOT_URL + Constants.URL_creerService;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                progressDialog.dismiss();
+                //System.out.println("url : " + url);
+                //System.out.println("response");
+                String res = response.trim();
+                System.out.println(res);
+
+                if (res.equals("1"))
+                    Toast.makeText(getApplicationContext(), "Demande envoyée", Toast.LENGTH_LONG).show();
+                else
+                    Toast.makeText(getApplicationContext(), "Demande  non envoyée", Toast.LENGTH_LONG).show();
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                //System.out.println("client "+MainActivity.idClient);
+                params.put("idclient", MainActivity.idClient);
+                //System.out.println("artisan "+spinnerArtisan.getSelectedItem().toString());
+                params.put("artisan", spinnerArtisan.getSelectedItem().toString());
+                //System.out.println("MetieName "+spinnerMetie.getSelectedItem().toString());
+                params.put("metier", spinnerMetie.getSelectedItem().toString());
+                //System.out.println("Description "+Description.getText().toString());
+                params.put("description", Description.getText().toString());
+                //System.out.println("location "+location.getText().toString());
+                params.put("location", location.getText().toString());
+                return params;
+            }
+        };
+        RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
+    }
+
+        public void Check(View v){
+            Intent intent =new Intent(client.this,ListService.class);
+            startActivity(intent);
+        }
+
+
 }
-
-
-
-

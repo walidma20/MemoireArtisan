@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/light_background"
     tools:context=".Create">
 
     <EditText
@@ -30,7 +31,6 @@
         android:ems="10"
         android:hint="Address"
         android:inputType="textPersonName"
-        android:onClick="btn_googleMap"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.477"

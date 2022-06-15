@@ -99,11 +99,6 @@ System.out.println(requete);
 
     }
 
-
-
-
-
-
     public void signin(View v) {
         Intent intent = new Intent(Create.this, MainActivity.class);
         startActivity(intent);
@@ -119,10 +114,6 @@ System.out.println(requete);
 
 
     }
-    public void btn_googleMap(View view){
-        Intent google_Map =new Intent(Intent.ACTION_VIEW);
-        google_Map.setData(Uri.parse("geo:36.354670, 6.635166?z=13"));
-        startActivity(google_Map);
-    }
+
 
 }

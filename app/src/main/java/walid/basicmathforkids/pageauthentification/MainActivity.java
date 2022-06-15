@@ -47,82 +47,70 @@ public class MainActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
     }
 
-    public void test(View view) {
-        String username = Myusername.getText().toString();
-        String password = Mypassword.getText().toString();
 
-        if (username.equals("walid") && password.equals("walid123")) {
-            Toast.makeText(getApplicationContext(), "username and password is correct", Toast.LENGTH_LONG).show();
-        } else
-            Toast.makeText(getApplicationContext(), "username and password is incorrect", Toast.LENGTH_LONG).show();
-
-
-    }
     public void Creaccount(View v) {
         Intent intent = new Intent(MainActivity.this, Create.class);
         startActivity(intent);
     }
-        public void ForgotPassword(View v){
+    public void ForgotPassword(View v){
 
-            Intent intent = new Intent(MainActivity.this, forgotPassword.class);
-            startActivity(intent);
-        }
+        Intent intent = new Intent(MainActivity.this, forgotPassword.class);
+        startActivity(intent);
+    }
     public void ChooseClient(View v){
 
-            String UserName = Username.getText().toString().trim();
-            String PASSWORD = Password.getText().toString().trim();
+        // String UserName = Username.getText().toString().trim();
+        //String PASSWORD = Password.getText().toString().trim();
 
-            String requete=Constants.ROOT_URL+Constants.URL_LoginClient;
-            System.out.println(requete);
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.ROOT_URL+Constants.URL_LoginClient,  new Response.Listener<String>() {
+        String requete=Constants.ROOT_URL+Constants.URL_LoginClient;
+        System.out.println(requete);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Constants.ROOT_URL+Constants.URL_LoginClient,  new Response.Listener<String>() {
 
-                @Override
-                public void onResponse(String response) {
-                    progressDialog.dismiss();
-                    try {
-                        System.out.println("reponse : " + response);
-                        JSONObject jsonObject = new JSONObject(response);
+            @Override
+            public void onResponse(String response) {
+                progressDialog.dismiss();
+                try {
+                    System.out.println("reponse : " + response);
+                    JSONObject jsonObject = new JSONObject(response);
 
-                        String error=jsonObject.getString("error");
-                        System.out.println("erreur : " + error);
-                        if(error.equals("false")){
-                            idClient=jsonObject.getString("id");
+                    String error=jsonObject.getString("error");
+                    System.out.println("erreur : " + error);
+                    if(error.equals("false")){
+                        idClient=jsonObject.getString("id");
                         Intent intent = new Intent(MainActivity.this, client.class);
                         startActivity(intent);}
-    else Toast.makeText(getApplicationContext(), "username and password is incorrect", Toast.LENGTH_LONG).show();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    else Toast.makeText(getApplicationContext(), "username and password is incorrect", Toast.LENGTH_LONG).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        progressDialog.hide();
+                        System.out.println("enregistrement erreur: "+error.getMessage());
+                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                }
-            },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            progressDialog.hide();
-                            System.out.println("enregistrement erreur: "+error.getMessage());
-                            Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    }) {
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("username",Myusername.getText().toString().trim());
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("username",Myusername.getText().toString().trim());
 
-                    params.put("Password", Mypassword.getText().toString().trim());
+                params.put("Password", Mypassword.getText().toString().trim());
 
-                    return params;
-                }
-            };
-            RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
+                return params;
+            }
+        };
+        RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
 
-        }
+    }
 
 
 
-    public void  ChooseArtisan () {
+    public void  ChooseArtisan (View view) {
 
-        String UserName = Username.getText().toString().trim();
-        String PASSWORD = Password.getText().toString().trim();
 
         String requete=Constants.ROOT_URL+Constants.URL_LoginArtisan;
         System.out.println(requete);
@@ -157,8 +145,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("username",UserName);
-                params.put("Password", PASSWORD);
+                params.put("username",Myusername.getText().toString().trim());
+
+                params.put("Password", Mypassword.getText().toString().trim());
 
                 return params;
             }
@@ -166,10 +155,6 @@ public class MainActivity extends AppCompatActivity {
         RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
 
     }
-  public void client(View v){
-      Intent intent = new Intent(MainActivity.this, client.class);
-      startActivity(intent);
-  }
-}
 
+}
 

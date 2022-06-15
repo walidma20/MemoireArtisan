@@ -2,9 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/Confirmation"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/light_background"
     tools:context=".client">
 
     <Spinner
@@ -76,7 +76,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
         android:text="Service selection"
-        android:textSize="16sp"
+        android:textColor="#000000"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.292"
         app:layout_constraintStart_toStartOf="parent"
@@ -87,7 +88,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Choose a service provider"
-        android:textSize="16sp"
+        android:textColor="#000000"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.327"
@@ -97,16 +99,31 @@
 
     <Button
         android:id="@+id/idConfirmation"
-        android:layout_width="309dp"
-        android:layout_height="67dp"
+        android:layout_width="260dp"
+        android:layout_height="51dp"
         android:layout_marginHorizontal="30dp"
         android:background="@drawable/button_m"
+        android:onClick="confirmation"
         android:text="Confirmation"
         android:textColor="#DDFFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.455"
+        app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.908" />
+        app:layout_constraintVertical_bias="0.879" />
+
+    <Button
+        android:id="@+id/check"
+        android:layout_width="264dp"
+        android:layout_height="45dp"
+        android:background="@drawable/button_m"
+        android:onClick="Check"
+        android:text="check"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/idConfirmation"
+        app:layout_constraintVertical_bias="0.483" />
 </androidx.constraintlayout.widget.ConstraintLayout>
